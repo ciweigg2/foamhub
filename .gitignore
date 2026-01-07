@@ -1,2 +1,10 @@
 .idea
 unpackage
+
+node_modules
+
+package-lock.json
+
+dist
+
+.DS_store
