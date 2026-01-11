@@ -48,7 +48,7 @@ services:
       - TMDB_IMAGE_URL=https://image.tmdb.org/t/p/original
       - TZ=Asia/Shanghai
       # 代理地址
-      - HTTP_PROXY_ENABLED=true
+      - HTTP_PROXY_ENABLED=false
       - HTTP_PROXY=http://ip:port
       - HTTPS_PROXY=http://ip:port
       - NO_PROXY=172.17.0.1,127.0.0.1,localhost,foam-api-search,selenium-chrome
@@ -109,9 +109,6 @@ services:
   selenium-chrome:
     image: selenium/standalone-chrome:latest
     platform: linux/amd64
-    ports:
-      - "4444:4444"
-      - "7900:7900"
     shm_size: "2gb"
     environment:
       - SE_NODE_MAX_SESSIONS=4
