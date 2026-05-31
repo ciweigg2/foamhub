@@ -1,0 +1,101 @@
+<!doctype html><html lang=zh-CN data-theme=light><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Foam V2 Docker Compose 部署教程。"><title>Foam V2 部署教程 · Foam</title><link rel=icon href=../assets/img/favicon.svg type=image/svg+xml><link rel=stylesheet href=../assets/css/styles.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css></head><body><header class=site-header><div class="container header-inner"><a class=brand href=../index.html aria-label=返回首页><img class=brand-logo src=../assets/img/foam.png alt="Foam Logo"> <span class=brand-name>Foam</span> </a><button class=nav-toggle aria-label=打开菜单 aria-expanded=false><span></span><span></span><span></span></button><nav class=site-nav aria-label=主导航><div class="nav-dropdown nav-version"><button class="nav-dropdown-trigger nav-version-trigger" type=button aria-haspopup=true aria-expanded=false>V2 <svg class=nav-dropdown-caret width=14 height=14 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round aria-hidden=true><polyline points="6 9 12 15 18 9"></polyline></svg></button><div class="nav-dropdown-menu nav-version-menu" role=menu><a href=./v2.html role=menuitem>V2</a> <a href=../v1.html role=menuitem>V1</a></div></div><a href=../index.html#features>功能</a> <a href=../docs-v2.html>文档</a> <a href=../index.html#get-started>开始使用</a> <a class=nav-github-mobile href=https://t.me/FoamHub target=_blank rel=noreferrer style=display:inline-flex;align-items:center;gap:4px>交流群组 <svg width=12 height=12 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round aria-hidden=true><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1=10 y1=14 x2=21 y2=3></line></svg> </a><a class=nav-github-mobile href=https://github.com/ciweigg2/foam-introduction target=_blank rel=noreferrer style=display:inline-flex;align-items:center;gap:4px>GitHub <svg width=12 height=12 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round aria-hidden=true><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1=10 y1=14 x2=21 y2=3></line></svg></a><div class=nav-dropdown><button class=nav-dropdown-trigger type=button aria-haspopup=true aria-expanded=false>教程 <svg class=nav-dropdown-caret width=14 height=14 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round aria-hidden=true><polyline points="6 9 12 15 18 9"></polyline></svg></button><div class=nav-dropdown-menu role=menu><a href=./v2.html role=menuitem aria-current=page>V2 教程</a></div></div><a class=nav-cta href=../index.html#download>下载</a> <button class=theme-toggle type=button aria-label=切换主题><span class=theme-icon aria-hidden=true>☾</span></button></nav></div></header><main class=docs id=top><section class="section docs-hero"><div class="container docs-hero-inner"><div><p class=kicker>教程 / V2</p><h1>Foam V2 部署教程</h1><p class=subhead>准备好 docker-compose.yml 后启动即可。Foam V2 支持迁移旧 Foam 数据，迁移入口在 V2 系统内。</p></div><div class=docs-hero-card><div class=docs-meta><div class=meta-item><div class=meta-k>运行方式</div><div class=meta-v>Docker Compose</div></div><div class=meta-item><div class=meta-k>启动命令</div><div class=meta-v>docker-compose up -d</div></div><div class=meta-item><div class=meta-k>迁移支持</div><div class=meta-v>Foam 数据迁移</div></div></div><a class="btn primary" href=#compose>查看配置</a></div></div></section><section class=section><div class="container docs-layout"><aside class=docs-toc aria-label=目录><div class=toc-title>目录</div><nav class=toc-links><a href=#prepare>准备目录</a> <a href=#compose>配置文件</a> <a href=#start>启动服务</a> <a href=#migrate>迁移 Foam 数据</a></nav></aside><article class=docs-content><section id=prepare class=docs-section><h2>准备目录</h2><p>创建一个单独目录，把下面的内容保存为 <code>docker-compose.yml</code>。</p><div class=code-card><div class=code-head><span class=code-title>Terminal</span> <button class=copy-btn data-copy-target=#code-prepare>复制</button></div><pre class=code-body><code id=code-prepare class=language-bash>mkdir -p foam-v2
+cd foam-v2</code></pre></div></section><section id=compose class=docs-section><h2>配置文件</h2><p>按需修改 TMDB、代理、端口等配置，其余保持默认即可。</p><div class=code-card><div class=code-head><span class=code-title>docker-compose.yml</span> <button class=copy-btn data-copy-target=#code-compose-v2>复制</button></div><pre class=code-body><code id=code-compose-v2 class=language-yaml>version: '3'
+services:
+  foam-api-v2:
+    image: ciwei123321/foam-api-v2:latest
+    privileged: true
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+      - /etc/hosts:/etc/hosts
+    container_name: foam-api-v2
+    restart: always
+    environment:
+      #db:3306 使用的是容器内部的端口 不是映射完的端口
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/foam-api-v2?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false&amp;serverTimezone=GMT%2B8&amp;allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=78FRC#5BqnOk0ppk
+      # 需要配置tmdb接口hosts
+      - TMDB_APITOKEN=tmdb api token
+      - TMDB_APIKEY=tmdb api key
+      - TMDB_IMAGE_URL=https://image.tmdb.org/t/p/original
+      - TZ=Asia/Shanghai
+      # 代理地址
+      - HTTP_PROXY_ENABLED=false
+      - HTTP_PROXY=http://ip:port
+      - HTTPS_PROXY=http://ip:port
+      - NO_PROXY=172.17.0.1,127.0.0.1,localhost
+      # 搜索接口地址 pansou地址
+      - EMBY_HUB_SEARCH_URL=
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PWD=123456
+      - REDIS_DB=0
+    networks:
+      - foam-network
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: mysql:8.4.6
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: 78FRC#5BqnOk0ppk
+      MYSQL_DATABASE: foam-api-v2
+      TZ: "Asia/Shanghai"
+      LANG: en_US.UTF-8
+    command:
+      - mysqld
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --group_concat_max_len=102400
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    restart: always
+    networks:
+      - foam-network
+
+  foam-web:
+    image: ciwei123321/foam-web:latest
+    container_name: foam-web
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      API_BASE_URL: "http://foam-api-v2:8080"
+      TZ: Asia/Shanghai
+      IMAGE_URL: https://image.tmdb.org/t/p/
+    networks:
+      - foam-network
+    links:
+      - foam-api-v2
+    depends_on:
+      - foam-api-v2
+
+  redis:
+    image: redis:7.4
+    container_name: redis_container
+    restart: always
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --save
+      - "60"
+      - "1"
+      - --requirepass
+      - "123456"
+    volumes:
+      - ./redis-data:/data
+    networks:
+      - foam-network
+
+networks:
+  foam-network:</code></pre></div></section><section id=start class=docs-section><h2>启动服务</h2><p>在 <code>docker-compose.yml</code> 所在目录执行启动命令。</p><div class=code-card><div class=code-head><span class=code-title>Terminal</span> <button class=copy-btn data-copy-target=#code-start>复制</button></div><pre class=code-body><code id=code-start class=language-bash>docker-compose up -d</code></pre></div><div class="admonition tip"><strong>访问地址：</strong>默认 Web 端口为 <code>8081</code>，浏览器访问 <code>http://服务器IP:8081</code>。</div></section><section id=migrate class=docs-section><h2>迁移 Foam 数据</h2><ol class=docs-ol><li>Foam V2 支持无缝迁移旧 Foam 数据。</li><li>部署并进入 Foam V2 后，在系统内手动执行数据迁移。</li><li>迁移完成后，主机地址需要重新保存一次：点编辑，然后直接保存即可。</li></ol><div class="admonition warn"><strong>建议：</strong>迁移前先备份旧 Foam 数据目录和数据库。</div></section></article></div></section></main><footer class=site-footer><div class="container footer-inner"><div><div class=footer-brand><span class=brand-mark aria-hidden=true>◆</span> <span class=brand-name>Foam</span></div><p class=muted>Emby 管理系统 · 代号Foam</p></div></div><div class="container footer-bottom"><span class=muted>Copyright © 2025-2026 Ciwei ❤️ Volcano 合作开发</span></div></footer><script src=../assets/js/main.js></script><script src=https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js></script><script>window.hljs&&hljs.highlightAll()</script><script src=../assets/js/docs.js></script></body></html>
